@@ -1,5 +1,4 @@
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
 public class MainFile {
     public static void main(String[]args){
@@ -14,44 +13,40 @@ public class MainFile {
 
         game.draw();
 
-        while(game.status()==game.PLAYING){
-            int row=-1;
-            int col=-1;
+        // while no win or draw, alternate turns between user and computer
+        while(game.status()==TicTacToe.PLAYING){
+            int row;
+            int col;
+            // user makes a move
             while(true) {
                 System.out.print("X, enter a row for your move: ");
                 row = kb.nextInt();
                 System.out.print("X, enter a column for your move: ");
                 col = kb.nextInt();
+                // checks for invalid inputs
                 if(game.isMoveValid(row,col)) {
-                    game.board[row][col] = 'X';
+                    game.move('X',row,col);
                     break;
                 }
                 else{
                     System.out.println("Invalid move. Try again. ");
                 }
-
-
             }
-
             game.draw();
             System.out.println("You moved to row "+row+", column "+col);
 
-            game.ai();
+            // computer makes a move
+            game.compMove();
             game.draw();
-
-            //System.out.println("Opponent moved to row "+game.comp_row+", column "+game.comp_col);
-
         }
 
         // win messages
-        if(game.status()==game.X_WINS)
+        if(game.status()==TicTacToe.X_WINS)
             System.out.print("X wins!");
-        else if(game.status()==game.O_WINS)
+        else if(game.status()==TicTacToe.O_WINS)
             System.out.print("O wins!");
-        else if(game.status()==game.CAT)
+        else if(game.status()==TicTacToe.CAT)
             System.out.print("CAT - draw!");
     }
-
-
 
 }

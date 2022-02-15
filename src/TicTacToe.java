@@ -16,13 +16,26 @@ public class TicTacToe {
 
     }
 
+    // places a move in the game board
+    public void move(char player, int row, int col) {
+        board[row][col] = player;
+    }
+
+    // checks if the move is valid
+    public boolean isMoveValid(int row, int col){
+        if(row>=0&&row<=4&&col>=0&&col<=4&&board[row][col]!='X'&&board[row][col]!='O')
+            return true;
+        else
+            return false;
+    }
+
+    // displays the game board
     public void draw() {
         System.out.println("    0   1   2   3   4");
         for (int r = 0; r < board.length; r++) {
             System.out.print(r + " ");
             System.out.print("|");
             for (int c = 0; c < board[0].length; c++) {
-
                 if (board[r][c] == ' ') {
                     System.out.print("   ");
                     System.out.print("|");
@@ -38,6 +51,7 @@ public class TicTacToe {
         }
     }
 
+    // checks for wins and draws, returns the status of the game
     public int status() {
         boolean win = false;
         for (int r = 0; r < board.length; r++) {
@@ -64,6 +78,7 @@ public class TicTacToe {
                         if (board[r][c] == current && board[r + 1][c - 1] == current && board[r + 2][c - 2] == current && board[r + 3][c - 3] == current)
                             win = true;
                     }
+                    // if someone wins, check who won
                     if (win) {
                         if (current == 'X')
                             return X_WINS;
@@ -73,6 +88,7 @@ public class TicTacToe {
                 }
             }
         }
+        // check for a draw (game board is full but no one has won)
         boolean full = true;
         for(int r=0;r<board.length;r++){
             for(int c =0; c<board.length; c++){
@@ -80,53 +96,53 @@ public class TicTacToe {
                     full=false;
             }
         }
-    if(full)
-        return CAT;
-    else
-        return PLAYING;
-    }
 
-
-    public void move(char player, int row, int col) {
-        board[row][col] = player;
-    }
-
-    public boolean isMoveValid(int row, int col){
-        if(row>=0&&row<=5&&col>=0&&col<=5&&board[row][col]==' ')
-            return true;
+        if(full)
+            return CAT;
         else
-            return false;
+            return PLAYING;
     }
 
-    public void ai() {
-        for (int r = 0; r < board.length; r++) {
-            for (int c = 0; c < board[0].length; c++) {
+    // computer bot
+    public void compMove() {
+        // blocks if there are 3 X's in a row
+        for (int r = 1; r < board.length; r++) {
+            for (int c = 1; c < board[0].length; c++) {
                 char current = board[r][c];
                 if (current == 'X') {
                     // check for vertical 3's
-                    if (r <= 1) {
+                    if (r == 1) {
                         if (board[r + 1][c] == current && board[r + 2][c] == current)
                             if (isMoveValid(r + 3, c)) {
                                 move('O', r + 3, c);
                                 return;
                             }
+                        else if(isMoveValid(r-1,c)){
+                            move('O',r-1,c);
+                            return;
+                            }
                     }
                     // check for horizontal 3's
-                    if (c <= 1) {
+                    if (c == 1) {
                         if (board[r][c + 1] == current && board[r][c + 2] == current)
                             if (isMoveValid(r, c + 3)) {
-                                System.out.println("1");
                                 move('O', r, c + 3);
+                                return;
+                            }
+                            else if(isMoveValid(r,c-1)){
+                                move('O',r,c-1);
                                 return;
                             }
                     }
                     // check for diagonal \ 3's
-                   if (r <= 1 && c <= 1) {
+                   if (r == 1 && c == 1) {
                         if (board[r + 1][c + 1] == current && board[r + 2][c + 2] == current)
                             if (isMoveValid(r + 3, c + 3)) {
-                                System.out.println("2");
-
                                 move('O', r + 3, c + 3);
+                                return;
+                            }
+                            else if(isMoveValid(r-1,c)){
+                                move('O',r-1,c-1);
                                 return;
                             }
                     }
@@ -134,25 +150,23 @@ public class TicTacToe {
                     if (r <= 1 && c >= 3) {
                         if (board[r][c] == current && board[r + 1][c - 1] == current && board[r + 2][c - 2] == current)
                             if (isMoveValid(r + 3, c - 3)) {
-                                System.out.println("3");
-
                                 move('O', r + 3, c - 3);
                                 return;
                             }
+                            else if(isMoveValid(r-1,c)){
+                                move('O',r-1,c);
+                                return;
+                            }
                     }
-
-
-
-
-
                 }
             }
         }
-        while(true) {
-            int comp_row = (int) (Math.random() * 4);
-            int comp_col = (int) (Math.random() * 4);
+
+        // if there are no 3 X's in a row to block, move randomly
+        while(status()==PLAYING) {
+            int comp_row = (int) (Math.random() * 5);
+            int comp_col = (int) (Math.random() * 5);
             if(isMoveValid(comp_row,comp_col)) {
-                System.out.print("4");
                 move('O', comp_row, comp_col);
                 break;
             }
